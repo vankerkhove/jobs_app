@@ -7,7 +7,7 @@
 {% block content %}
   <h2>Jobs Search</h2>
 
-  <div><p>Find job (leave all fields blank to list all):</p></div>
+  <p>Find job (leave all fields blank to list all):</p>
   <form method="post">
     <label for="company">Company:</label>
     <input id="company" name="company" value="{{ company }}"><br><br>
@@ -19,6 +19,7 @@
     <input id="applied" name="applied" value="{{ applied }}"><br><br>
 
     <input type="submit" name="find_job" value="Find Job">
+    &nbsp;
     <input type="submit" name="reset_page" value="Reset">
 
     {% if one_job %}
@@ -37,24 +38,24 @@
           <tr><td> Decline </td><td> {{ one_job[8] }} </td></tr>
           <tr><td> Notes </td><td> {{ one_job[9] | safe }} </td></tr>
         </tbody>
-    <table>
-    <input type="submit" name="select_edit" value="Edit">
-    <input type="submit" name="select_delete" value="Delete">
-  {% endif %}
+      <table>
+      <input type="submit" name="select_edit" value="Edit">
+      &nbsp;
+      <input type="submit" name="select_delete" value="Delete">
+    {% endif %}
 
     {% if jobs_list %}
-      <div><p>Select Job:</p></div>
-      <div>
-      <p><input type="submit" name="get_job" value="Get Job"></p>
-      </div>
+      <br><br>
+      <input type="submit" name="get_job" value="Get Job:">
+      <div class="scrollable-section">
       {% for job in jobs_list %}
-        <div>
         <input type="radio" id="id_{{ job[0] }}" name="selected_job"
           value="{{ job[0] }}" 
-        {% if selected == job[0] %}checked{% endif %}>
+        {% if job == jobs_list[0] %} checked{% endif %}>
         <label for="id_{{ job[0] }}">{{ job[1] }}, {{ job[2] }}, {{ job[3] }}</label>
-        </div>
+        <br>
       {% endfor %}
+      </div>
     {% endif %}
 
   </form>

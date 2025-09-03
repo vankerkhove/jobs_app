@@ -9,7 +9,7 @@
       {% endif %}
   </head>
   <body>
-    <div>
+    <div class="header" id="myHeader">
 	  <h1>Job Application</h1>
       Job Search navigation:
       <a href="{{ url_for('jobs.index') }}">Home</a> -
@@ -17,8 +17,8 @@
       <a href="{{ url_for('jobs.add') }}">Add</a> -
       <a href="{{ url_for('jobs.find') }}">Find</a> -
       <a href="{{ url_for('jobs.description') }}">Descriptions </a>
-    </div>
     <hr>
+    </div>
     {% with messages = get_flashed_messages() %}
       {% if messages %}
         <ul>
