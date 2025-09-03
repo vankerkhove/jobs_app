@@ -106,6 +106,28 @@ def get_jobs(columns='*', condition=None):
     except Exception as e:
         print(f"Exception - Get Job error: {e}")
 
+def id_list():
+    jobs_ids = get_jobs(columns='id')
+    try:
+        _jobs = [x[0] for x in jobs_ids]
+        _jobs.sort()
+        return _jobs
+    except Exception as e:
+        print(f"Exception - Get Job error: {e}")
+
+def next_job(id):
+    _id_list = id_list()
+    index = _id_list.index(id)
+    next = index + 1 if index < len(_id_list) - 1 else 0
+    return _id_list[next]
+
+def previous_job(id):
+    _id_list = id_list()
+    index = _id_list.index(id)
+    previous = index - 1 if index > 0 else len(_id_list) - 1
+    return _id_list[previous]
+        
+
 def key_condition(company, position, applied):
     """format keys fields: company, position, appplied into db search condition
     """
@@ -187,6 +209,10 @@ def details(id):
             return redirect( url_for('jobs.edits', id=int(id) ))
         if 'select_delete' in forms:
             return redirect( url_for('jobs.deletes', id=int(id) ))
+        if 'select_previous' in forms:
+            return redirect( url_for('jobs.details', id=previous_job(id)) )
+        if 'select_next' in forms:
+            return redirect( url_for('jobs.details', id=next_job(id)) )
 
     return render_template('details.html', job=job)
 
