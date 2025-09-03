@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  index block header
+{% endblock %}
+
+{% block content %}
+  <h2>Listing Options</h2>
+
+    Select columns to display:
+    {% for column in column_list %}
+    <form method="POST">
+        <div>
+        <input type="checkbox" id="{{ column }}" name="{{ column }}"
+            {% if column in default_list %}checked{% endif %}>
+        <label for={{ column }}>{{ column }}</label>
+        </div>
+    {% endfor %}
+    <div><p>
+        <input type="submit" name="list" value="List">
+        <input type="submit" name="list" value="Ordered">
+    </p></div>
+    </form>
+    <br>
+  {% endblock %}

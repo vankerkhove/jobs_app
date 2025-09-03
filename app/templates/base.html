@@ -1,0 +1,36 @@
+<!doctype html>
+<html>
+  <head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+      {% if title %}
+    <title>{{ title }} - Job Search</title>
+      {% else %}
+    <title>Job App</title>
+      {% endif %}
+  </head>
+  <body>
+    <div>
+	  <h1>Job Application</h1>
+      Job Search navigation:
+      <a href="{{ url_for('jobs.index') }}">Home</a> -
+      <a href="{{ url_for('jobs.listing') }}">Listing</a> -
+      <a href="{{ url_for('jobs.add') }}">Add</a> -
+      <a href="{{ url_for('jobs.find') }}">Find</a> -
+      <a href="{{ url_for('jobs.description') }}">Descriptions </a>
+    </div>
+    <hr>
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <ul>
+        {% for _message in messages %}
+          <br><i style="color: blue;">{{ _message }}</i>
+        {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+    {% if message %}
+	  <div><p style='color:blue;'>{{ message }}</p></div>
+    {% endif %}
+    {% block content %}{% endblock %}
+  </body>
+</html>

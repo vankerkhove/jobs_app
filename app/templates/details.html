@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  index block header
+{% endblock %}
+
+{% block content %}
+  <h2>Jobs Details</h2>
+
+  <table>
+    <tbody>
+      <tr><td> ID </td><td> {{ job[0] }} </td></tr>
+      <tr><td> Company </td><td> {{ job[1] }} </td></tr>
+      <tr><td> Position </td><td> {{ job[2] }} </td></tr>
+      <tr><td> Applied</td><td> {{ job[3] }} </td></tr>
+      <tr><td> Source </td><td> {{ job[4] }} </td></tr>
+      <tr><td> Remote </td><td> {{ job[5] }} </td></tr>
+      <tr><td> Cover Letter </td><td> {{ job[6] }} </td></tr>
+      <tr><td> Interview </td><td> {{ job[7] | safe }} </td></tr>
+      <tr><td> Decline </td><td> {{ job[8] }} </td></tr>
+      <tr><td> Notes </td><td> {{ job[9] | safe }} </td></tr>
+
+    </tbody>
+  <table>
+
+
+  <form method="post">
+    <br>
+    <input type="hidden" name="original_job" value="{{ job }}"/>
+    <div>
+      {% if delete %}
+        <input type="submit" name="select_confirm_delete" style="color: red;" value="Confirm Delete">
+        <input type="submit" name="select_cancel_delete" value="Cancel Delete">
+      {% else %}
+        <input type="submit" name="select_edit" value="Edit">
+        <input type="submit" name="select_delete" value="Delete">
+      {% endif %}
+    </div>
+  </form>
+  <br>
+{% endblock %}

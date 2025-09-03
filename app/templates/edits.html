@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  index block header
+{% endblock %}
+
+{% block content %}
+  {% if add %}
+    <h2>Job Add</h2>
+  {% else %}
+    <h2>Job Edit</h2>
+  {% endif %}
+  {% if job %}
+  ID: {{ job[0] }}
+  <br><br>
+  <form method="post">
+        {% if original_job %}
+            <input type="hidden" name="original_job"
+              value="{{ original_job }}"/>
+        {% else %}
+            <input type="hidden" name="original_job" value="{{ job }}"/>
+        {% endif %}
+        <input type="hidden" name="return_job" value="{{ job }}"/>
+
+        <p><label for="company">Company:</label>
+        <input id="company" name="company" required value="{{ job[1] }}"></p>
+
+        <p><label for="position">Position:</label>
+        <input id="position" name="position" required value="{{ job[2] }}"></p>
+    
+        <label for="applied">Applied (date):</label>
+        <input type="date" id="applied" name="applied" value="{{ job[3] }}">
+          <br><br>
+
+        <label for="source">Source:</label>
+        <input id="source" name="source" value="{{ job[4] }}"><br><br>
+
+        <label for="remote">Remote:</label>
+        <input type="checkbox" id="remote" name="remote" 
+          {% if job[5] %}checked{% endif %}><br><br>
+
+        <label for="cover">Cover Letter:</label>
+        <input type="checkbox" id="cover" name="cover" 
+          {% if job[6] %}checked{% endif %}><br><br>
+    
+        <label for="interview">Interview (date/notes):</label><br>
+        <textarea style="white-space:pre-wrap; word-wrap:break-word"
+          id="interview" name="interview"
+          rows="6" cols="80">{{ job[7] }}</textarea>
+         <br><br>
+    
+        <label for="decline">Decline (date):</label>
+        <input  type="date" id="decline" name="decline" value="{{ job[8] }}">
+          <br><br>
+    
+        <label for="notes">Notes:</label><br>
+        <textarea style="white-space:pre-wrap; word-wrap:break-word" id="notes"
+          name="notes" rows="6" cols="80">{{ job[9] }}</textarea><br><br>
+
+    {% if add %}
+      <input type="submit" name="select_add" value="Add">
+      <input type="submit" name="select_cancel" value="Cancel" formnovalidate>
+    {% else %}
+      <input type="submit" name="select_update" value="Update">
+      <input type="submit" name="select_cancel" value="Cancel" formnovalidate>
+      <input type="submit" name="select_reset" value="Reset" formnovalidate>
+    {% endif %}
+    {% if confirm %}
+      <input type="submit" name="select_confirm" value="Confirm" formnovalidate>
+    {% endif %}
+  </form>
+  <br>
+  {% endif %}
+{% endblock %}

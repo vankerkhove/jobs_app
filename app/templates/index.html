@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  index block header
+<style>
+  .fixed-width-label { display: inline-block;  width: 150px;  text-align: right;  }
+</style>
+{% endblock %}
+
+{% block content %}
+  <h2>Jobs...</h2>
+
+  {% if jobs %}
+    <table>
+      <tbody>
+        {% for row in jobs %}
+          <tr>
+          {% for item in row %}
+            <td style="padding-right: 10px;">{{ item }} </td>
+          {% endfor %}
+		      <td style="padding-right: 10px;">
+            <a href="{{ url_for('jobs.details', id=row[0]) }}">view</a>
+            </td>
+		      <td style="padding-right: 10px;">
+            <a href="{{ url_for('jobs.deletes', id=row[0]) }}">delete</a>
+            </td>
+          </tr>
+        {% endfor %}
+       </tbody>
+    <table>
+  {% else %}
+    <div><p style='color:red;'>no data</p></div>
+  {% endif %}
+  <br>
+  Number of jobs: {{ number }}
+  <br>
+  
+  <h3>Update Database</h3>
+  <form method="post">
+        <input type="submit" name="update_jobs_json" value="Update Jobs JSON">
+        <br>
+
+        <label for="docx" class="fixed-width-label">DOCX file: </label>
+        <input id="docx" name="docx" size=60
+          value="c:/_workspace/jobs_app/data/outline/Jobs_Applied_outline.docx">
+        <br>
+
+        <label for="target" class="fixed-width-label">Job List Target: </label>
+        <input id="target" name="target" size=60
+          value="c:/_workspace/jobs_app/data/jobs_outline">
+          (do not include extension)
+        <br>
+
+        <input type="submit" name="update_jobs_db" value="Update Jobs List">
+        <br>
+
+        <label for="source" size=50 class="fixed-width-label">JSON Source: </label>
+        <input id="source" name="source" size=60
+          value="c:/_workspace/jobs_app/data/jobs_outline.json">
+        <br>
+
+        <br><br>
+        <input type="submit" name="update_desc_db" value="Update Descriptions">
+        <br>
+  </form>
+  <br>
+{% endblock %}
