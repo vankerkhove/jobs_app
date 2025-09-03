@@ -1,0 +1,36 @@
+/_workspace/jobs_app/
+├── .venv/
+├── .git/
+├── app/
+│   ├── __init__.py
+│   ├── helper.py
+│   ├── *jobs_db_def.py
+│   ├── jobs_db.py
+│   ├── *jobs_details_db.py
+│   ├── jobs_schema.sql
+│   ├── jobs.py
+│   ├── parse_job_list.py
+│   ├── templates/
+│   │   ├── base.html (template for all page)
+│   │   ├── index.html (home page)
+│   │   ├── details.html
+│   │   ├── edit.html
+│   │   ├── find.html
+│   │   ├── index.html
+│   │   └── listing.html
+│   └── static/
+│       └── style.css
+│   └── *data/
+│      ├── *jobs_db.sql
+│      ├── jobs_outline...
+│      └── outline/
+│          └── Jobs_Applied_outline...
+├── instance/
+│   ├── *jobs_save.sqlite
+│   └── jobs.sqlite
+├── *tests/
+│   └── test_...py
+├── *pyproject.toml
+├── README.md
+├── layout.txt
+└── *MANIFEST.in
