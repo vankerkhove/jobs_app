@@ -8,9 +8,9 @@ from app.parse_job_list import write_jobs_list
 
 bp = Blueprint('jobs', __name__)
 
-DEFAULT_JSON_FILE = "c:/_workspace/jobs_app/app/data/jobs_outline.json"
-DEFAULT_DETAILS_FILE = "c:/_workspace/jobs_app/app/data/outline/Jobs_Applied_outline.docx"
-TEST_DETAILS_TARGET = "c:/_workspace/jobs_app/app/data/jobs_outline"
+DEFAULT_JSON_FILE =    "c:/_workspace/jobs_app/data/jobs_outline.json"
+DEFAULT_DETAILS_FILE = "c:/_workspace/jobs_app/data/outline/Jobs_Applied_outline.docx"
+TEST_DETAILS_TARGET =  "c:/_workspace/jobs_app/data/jobs_outline"
 
 def table_columns(table='jobs'):
     column_info = get_db().execute(f"PRAGMA table_info({table});").fetchall()
@@ -106,6 +106,11 @@ def get_jobs(columns='*', condition=None):
     except Exception as e:
         print(f"Exception - Get Job error: {e}")
 
+def interview_jobs():
+    # SELECT * FROM jobs WHERE interview IS NOT NULL AND interview != '';
+    where =  "interview IS NOT NULL AND interview != ''"
+    return get_jobs(condition=where)
+
 def id_list():
     jobs_ids = get_jobs(columns='id')
     try:
@@ -128,7 +133,7 @@ def previous_job(id):
     return _id_list[previous]
         
 
-def key_condition(company, position, applied):
+def key_condition(company, position, applied, interview=None):
     """format keys fields: company, position, appplied into db search condition
     """
     conditions = []
@@ -138,6 +143,8 @@ def key_condition(company, position, applied):
         conditions.append(f"position LIKE '%{position}%'")
     if applied:
         conditions.append(f"applied LIKE '%{applied}%'")
+    if interview:
+        conditions.append(f"interview LIKE '%{interview}%'")
     if conditions:
         all = " AND ".join(conditions)
         conditions = f"{all} COLLATE NOCASE"
@@ -341,15 +348,17 @@ def deletes(id):
 def find(id=None):
     jobs_list = None
     one_job = None
+    interview_jobs = None
 
     if request.method == 'POST':
         company = request.form['company']
         position = request.form['position']
         applied = request.form['applied']
+        interview = request.form['interview']
         
         forms = request.form.keys()
         if 'find_job' in forms:
-            condition = key_condition(company, position, applied)
+            condition = key_condition(company, position, applied, interview)
             jobs = get_jobs(condition=condition)
             if type(jobs) == list and len(jobs) > 0:
                 if len(jobs) > 1:
@@ -357,6 +366,11 @@ def find(id=None):
                 else:
                     one_job = jobs[0]
                     one_job = [html_multiline(str(i)) for i in one_job]
+
+        elif "get_interview_jobs" in request.form.keys():
+            where =  "interview IS NOT NULL AND interview != ''"
+            jobs_list = get_jobs(condition=where)
+            interview_jobs = True
 
         elif "selected_job" in request.form.keys():
             one_job = get_job(request.form['selected_job'])
@@ -369,7 +383,11 @@ def find(id=None):
         if "select_delete" in request.form.keys():
             return redirect(url_for('jobs.deletes', id=request.form['job_id']))
             
-    return render_template('find.html', one_job=one_job, jobs_list=jobs_list)
+    return render_template(
+        'find.html',
+        one_job=one_job,
+        jobs_list=jobs_list,
+        interview_jobs=interview_jobs)
 
 
 @bp.route('/description', methods=['GET', 'POST'])

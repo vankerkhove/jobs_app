@@ -11,15 +11,8 @@
     <h2>Job Edit</h2>
   {% endif %}
   {% if job %}
-  ID: {{ job[0] }}
-  <br><br>
+  <p>ID: {{ job[0] }}</p>
   <form method="post">
-        {% if original_job %}
-            <input type="hidden" name="original_job"
-              value="{{ original_job }}"/>
-        {% else %}
-            <input type="hidden" name="original_job" value="{{ job }}"/>
-        {% endif %}
         <input type="hidden" name="return_job" value="{{ job }}"/>
 
         <p><label for="company">Company:</label>

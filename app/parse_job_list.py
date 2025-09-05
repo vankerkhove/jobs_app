@@ -1,12 +1,28 @@
 """
 Parse Job List
 
-Will parse the job list document (docx) file. The format of this fils is:
+The format outline of each job in the jobs list document is:
+    N. comany_name
+    \tN.1 position_name (optional: 'remote'/'local')
+    \t\tN.1.m Source: text_source_name (optional)
+    \t\tN.1.m Remote (flag optional: is a remote job)
+    \t\tN.1.m Cover Letter (flag optional: application included cover letter)
+    \t\tN.1.m Local (flag optional: is a local job)
+    \t\tN.1.m Applied date_applied (optional)
+    \t\tN.1.m Interview
+    \t\t\tN.1.m.n text_additional_interview (optional: multiple lines)
+    \t\t\tN.1.m.n text_additional_interview (optional: multiple lines)
+    \t\tN.1.m Decline date_decline_notice (optional)
+    \t\tN.1.m Notes text_notes (optional)
+    \t\t\tN.1.m.n text_additional_notes (optional: multiple lines)
+    \t\t\tN.1.m.n text_additional_notes (optional: multiple lines)
+    \t\tN.1.m text_other (optional: appended to notes)
 
-1. comany_name
-\t1.1 position (require)
-\t1.1.1 details (require) 
-\t\t\t1.1.1.1 sub-details
+Will parse the job list document (docx) file. The format of this fils is:
+    1. comany_name
+    \t1.1 position (require)
+    \t1.1.1 details (require) 
+    \t\t\t1.1.1.1 sub-details
 
 Details
 Should include the application date: \t1.1.1 Applied: m/d
@@ -94,16 +110,25 @@ def reset_job(company):
     job["company"] = company.strip()
     return job
 
+def get_detail_text(detail='', line=''):
+    # get the text for the job detail: 
+    text = line[len(detail):] # remove detail label
+    text = text[1:] if text.find(':') == 0 else text # remove if ':'
+    return text.strip()
 
 def get_job_details(job, text):
+    text = text.strip()
     detail_is = "notes"
     
-    if "Source: " in text:
-        detail_is = "source"
-        job["source"] = text.replace("Source: ", "")
+    # if "Source: " in text:
+    if text.lower().find('source') == 0:
+        # detail_is = "source"
+        # job["source"] = text.replace("Source: ", "")
+        job["source"] = get_detail_text(detail='source', line=text)
 
-    elif "applied" in text.lower():
-        detail_is = "applied"
+    #elif "applied" in text.lower():
+    elif text.lower().find('applied') == 0:
+        # detail_is = "applied"
         job["applied"] = iso_date(get_date(text, cutoff=12))
 
         if "remote" in text.lower():
@@ -111,28 +136,39 @@ def get_job_details(job, text):
         if "cover" in text.lower():
             job["cover"] = True
 
-    elif "cover letter" in text.lower():
+    #elif "cover letter" in text.lower():
+    elif text.lower().find('cover') == 0:
             job["cover"] = True
 
-    elif "interview" in text.lower():
+    #elif "interview" in text.lower():
+    elif text.lower().find('interview') == 0:
         detail_is = "interview"
-        job['interview'].append(iso_date(get_date(text, cutoff=12)))
+        # job['interview'].append(iso_date(get_date(text, cutoff=12)))
+        interview_text = get_detail_text(detail='interview', line=text)
+        if interview_text:
+            job["interview"].append(interview_text)
 
-    elif "decline" in text.lower():
-        detail_is = "decline"
+    #elif "decline" in text.lower():
+    elif text.lower().find('decline') == 0:
         job["decline"] = iso_date(get_date(text, cutoff=12))
 
-    elif "remote" == text[:6].lower():
+    #elif "remote" == text[:6].lower():
+    elif text.lower().find('remote') == 0:
         job["remote"] = True
 
-    elif "local" == text[:5].lower():
+    #elif "local" == text[:5].lower():
+    elif text.lower().find('local') == 0:
         job["remote"] = False
 
-    elif "notes" == text.strip().lower():
-        detail_is = "notes"
-
+    elif text.lower().find('notes') == 0:
+        txt = get_detail_text(detail='notes', line=text)
+        if txt:
+            job["notes"].append(txt)
+    elif text.lower().find('note') == 0:
+        txt = get_detail_text(detail='note', line=text)
+        if txt:
+            job["notes"].append(txt)
     else:
-        detail_is = "notes"
         job['notes'].append(text)
     
     return job, detail_is
@@ -180,7 +216,11 @@ def get_job_list(file=DEFAULT_FILE):
         elif line.leading_tabs > 3:  # is sub-detail
             # append the text to the previous detail level
             job[detail].append(f"{outline_number}. {text}")
-    
+
+    if job and job["company"] and job["position"]:
+        # Append last job if any
+        jobs.append(job)
+
     return jobs
 
 

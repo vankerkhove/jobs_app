@@ -8,7 +8,9 @@
 {% endblock %}
 
 {% block content %}
+  <div id="div_xtop"></div>
   <h2>Jobs...</h2>
+  <a href="#div_database">jump to update database</a><br><br>
 
   {% if jobs %}
     <table>
@@ -35,6 +37,7 @@
   Number of jobs: {{ number }}
   <br>
   
+  <div id="div_database"></div>
   <h3>Update Database</h3>
   <form method="post">
         <input type="submit" name="update_jobs_json" value="Update Jobs JSON">
@@ -63,5 +66,5 @@
         <input type="submit" name="update_desc_db" value="Update Descriptions">
         <br>
   </form>
-  <br>
+  <br><a href="#top_of_page">jump to top</a><br>
 {% endblock %}

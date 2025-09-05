@@ -18,6 +18,11 @@
     <label for="applied">Applied (date):</label>
     <input id="applied" name="applied" value="{{ applied }}"><br><br>
 
+    <label for="interview">Interview (text):</label>
+    <input id="interview" name="interview" value="{{ interview }}">
+    <input type="submit" name="get_interview_jobs" value="Get Interview Jobs">
+    <br><br>
+
     <input type="submit" name="find_job" value="Find Job">
     &nbsp;
     <input type="submit" name="reset_page" value="Reset">
@@ -52,7 +57,13 @@
         <input type="radio" id="id_{{ job[0] }}" name="selected_job"
           value="{{ job[0] }}" 
         {% if job == jobs_list[0] %} checked{% endif %}>
-        <label for="id_{{ job[0] }}">{{ job[1] }}, {{ job[2] }}, {{ job[3] }}</label>
+          <label for="id_{{ job[0] }}">{{ job[1] }}, {{ job[2] }}, 
+          {% if interview_jobs %}
+            <i style="color: blue;">INTERVIEW: {{ job[7] }}</i>
+          {% else %}
+            {{ job[3] }}
+          {% endif %}
+          </label>
         <br>
       {% endfor %}
       </div>

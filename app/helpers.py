@@ -46,7 +46,7 @@ def get_date(line: str, index=0, year=None, cutoff=0) -> str:
         return _date
 
     else:
-        return "unknown"
+        return "_unknown_"
 
 def iso_date(line: str, index=0, year=None, cutoff=0) -> str:
     """
