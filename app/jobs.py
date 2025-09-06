@@ -349,16 +349,21 @@ def find(id=None):
     jobs_list = None
     one_job = None
     interview_jobs = None
+    company = ""
+    position = ""
+    applied = ""
 
     if request.method == 'POST':
         company = request.form['company']
         position = request.form['position']
         applied = request.form['applied']
-        interview = request.form['interview']
         
         forms = request.form.keys()
+        if "reset_page" in request.form.keys():
+            return render_template('find.html')
+
         if 'find_job' in forms:
-            condition = key_condition(company, position, applied, interview)
+            condition = key_condition(company, position, applied)
             jobs = get_jobs(condition=condition)
             if type(jobs) == list and len(jobs) > 0:
                 if len(jobs) > 1:
@@ -366,6 +371,8 @@ def find(id=None):
                 else:
                     one_job = jobs[0]
                     one_job = [html_multiline(str(i)) for i in one_job]
+            else:
+                flash('No jobs found...')
 
         elif "get_interview_jobs" in request.form.keys():
             where =  "interview IS NOT NULL AND interview != ''"
@@ -386,6 +393,9 @@ def find(id=None):
     return render_template(
         'find.html',
         one_job=one_job,
+        company=company,
+        position=position,
+        applied=applied,
         jobs_list=jobs_list,
         interview_jobs=interview_jobs)
 
