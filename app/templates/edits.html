@@ -15,36 +15,35 @@
   <form method="post">
         <input type="hidden" name="return_job" value="{{ job }}"/>
 
-        <p><label for="company">Company:</label>
-        <input id="company" name="company" required value="{{ job[1] }}"></p>
+        <label for="company">Company:</label>
+        <input id="company" name="company" required value="{{ job[1] }}"><br>
 
-        <p><label for="position">Position:</label>
-        <input id="position" name="position" required value="{{ job[2] }}"></p>
+        <label for="position">Position:</label>
+        <input id="position" name="position" required value="{{ job[2] }}"><br>
     
         <label for="applied">Applied (date):</label>
-        <input type="date" id="applied" name="applied" value="{{ job[3] }}">
-          <br><br>
+        <input type="date" id="applied" name="applied" value="{{ job[3] }}"><br>
 
         <label for="source">Source:</label>
-        <input id="source" name="source" value="{{ job[4] }}"><br><br>
+        <input id="source" name="source" value="{{ job[4] }}"><br>
 
         <label for="remote">Remote:</label>
         <input type="checkbox" id="remote" name="remote" 
-          {% if job[5] %}checked{% endif %}><br><br>
+          {% if job[5] %}checked{% endif %}><br>
 
         <label for="cover">Cover Letter:</label>
         <input type="checkbox" id="cover" name="cover" 
-          {% if job[6] %}checked{% endif %}><br><br>
+          {% if job[6] %}checked{% endif %}><br>
     
         <label for="interview">Interview (date/notes):</label><br>
         <textarea style="white-space:pre-wrap; word-wrap:break-word"
           id="interview" name="interview"
           rows="6" cols="80">{{ job[7] }}</textarea>
-         <br><br>
+         <br>
     
         <label for="decline">Decline (date):</label>
         <input  type="date" id="decline" name="decline" value="{{ job[8] }}">
-          <br><br>
+          <br>
     
         <label for="notes">Notes:</label><br>
         <textarea style="white-space:pre-wrap; word-wrap:break-word" id="notes"

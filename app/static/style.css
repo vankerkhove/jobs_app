@@ -4,6 +4,7 @@ h1 { font-family: serif; color: #377ba8; margin: 1rem 0; }
 h2 { color: navy; margin: 1rem 0; }
 h3 { color: navy; margin: 1rem 0; }
 a { color: #377ba8; }
+input { margin-bottom: 0.75em; }
 .form-row { display: flex; align-items: center;  margin-bottom: 10px; }
 .fixed-width-label { display: inline-block;  width: 120px;  text-align: 
     right; margin-bottom: 10px; }
