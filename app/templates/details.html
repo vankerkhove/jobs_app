@@ -7,6 +7,14 @@
 {% block content %}
   <h2>Jobs Details</h2>
 
+  <form method="post">
+    <div>
+      <input type="submit" name="select_previous" value="< Previous">
+      <input type="submit" name="select_next" value="Next >">
+    </div>
+    <br>
+  </form>
+
   <table>
     <tbody>
       <tr><td> ID </td><td> {{ job[0] }} </td></tr>
@@ -19,7 +27,6 @@
       <tr><td> Interview </td><td> {{ job[7] | safe }} </td></tr>
       <tr><td> Decline </td><td> {{ job[8] }} </td></tr>
       <tr><td> Notes </td><td> {{ job[9] | safe }} </td></tr>
-
     </tbody>
   <table>
 
@@ -33,8 +40,6 @@
       {% else %}
         <input type="submit" name="select_edit" value="Edit">
         <input type="submit" name="select_delete" value="Delete">
-        <input type="submit" name="select_previous" style="font-weight: bold"; value=" < ">
-        <input type="submit" name="select_next" style="font-weight: bold"; value=" > ">
       {% endif %}
     </div>
   </form>
