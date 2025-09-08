@@ -1,15 +1,16 @@
 /_workspace/jobs_app/
-├── .venv/
-├── .git/
+├── .venv/ (ignore)
+├── .git/ (ignore)
 ├── app/
 │   ├── __init__.py
 │   ├── helper.py
-│   ├── *jobs_db_def.py
+│   ├── *jobs_db_def.py (ignore)
 │   ├── jobs_db.py
-│   ├── *jobs_details_db.py
+│   ├── *jobs_details_db.py (ignore)
 │   ├── jobs_schema.sql
 │   ├── jobs.py
 │   ├── parse_job_list.py
+│   ├── __pycache__/ (ignore)
 │   ├── templates/
 │   │   ├── base.html (template for all page)
 │   │   ├── index.html (home page)
@@ -25,12 +26,12 @@
 │      ├── jobs_outline...
 │      └── outline/
 │          └── Jobs_Applied_outline...
-├── instance/
-│   ├── *jobs_save.sqlite
+├── instance/ (ignore)
+│   ├── *jobs_???.sqlite (backup)
 │   └── jobs.sqlite
-├── *tests/
+├── *tests/ (future)
 │   └── test_...py
-├── *pyproject.toml
+├── *pyproject.toml (future)
 ├── README.md
-├── layout.txt
-└── *MANIFEST.in
+├── layout.txt (this file)
+└── *MANIFEST.in (future)
