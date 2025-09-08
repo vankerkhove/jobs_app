@@ -12,3 +12,5 @@ input { margin-bottom: 0.75em; }
     background-color: #eee; }
 .scrollable-section { height: 400px; width: 80%; padding-left: 10px; 
     overflow: auto; }
+tbody tr:nth-child(odd) { background-color: #f2f2f2; }
+tbody tr:nth-child(even) { background-color: #ffffff; }
