@@ -43,5 +43,10 @@
       {% endif %}
     </div>
   </form>
-  <br>
+  {% if description %}
+    <details margin-left: 2em; >
+      <summary >Description:</summary>
+        <p>{{ description | replace('\n', '<br>') | safe }}</p>
+    </details>
+  {% endif %}
 {% endblock %}

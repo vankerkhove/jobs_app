@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  index block header
+<style>
+  .fixed-width-label { display: inline-block;  width: 150px;  text-align: right;  }
+</style>
+{% endblock %}
+
+{% block content %}
+  <div id="div_xtop"></div>
+  <h2>Descriptions...</h2>
+
+  <p>Find job (leave all fields blank to list all):</p>
+  <form method="post">
+    <label for="company">Company:</label>
+    <input id="company" name="company" value="{{ company }}"><br>
+
+    <label for="position">Position:</label>
+    <input id="position" name="position" value="{{ position }}"><br>
+
+    <label for="applied">Applied (date):</label>
+    <input id="applied" name="applied" value="{{ applied }}"><br>
+
+    <input type="submit" name="find_job" value="Find Job">
+    &nbsp;
+    <input type="submit" name="reset_page" value="Reset">
+    &nbsp;
+    <input type="submit" name="select_sync_jobs" value="Sync Jobs">
+    <br>
+
+  <a href="{{ url_for('jobs.descriptions') }}">collapse all</a>
+  <a href="#div_xbottom">jump to bottom</a><br><br>
+
+  {% if jobs %}
+    {% for row in jobs %}
+      {{ row[2] }}, {{ row[3] }}, {{ row[4] }} 
+      (ID: {{ row[0] }}, Job Details: 
+      {% if row[1] %}
+        <a href="{{ url_for('jobs.details', id=row[1]) }}">{{ row[1] }}</a>)
+      {% else %}
+        None)
+      {% endif %}
+      <a href="{{ url_for('jobs.description_edit', id=row[0]) }}">edit</a>
+      <a href="{{ url_for('jobs.description_delete', id=row[0]) }}">delete</a>
+      <details margin-left: 2em; >
+        <summary >Description:</summary>
+          <p>{{ row[5] | replace('\n', '<br>') | safe }}</p>
+      </details>
+    {% endfor %}
+  {% endif %}
+  <br>
+  Number of descriptions: {{ number }}
+  <br>
+  <div id="div_xbottom"></div>
+  <br><a href="#top_of_page">jump to top</a><br>
+{% endblock %}

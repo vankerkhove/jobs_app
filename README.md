@@ -36,3 +36,11 @@ If app name is 'app' then:
 flask run
 
 From browser: http://127.0.0.1:5000
+
+NOTE:
+- When installing docx module, needed to install python-docx due to 
+ModuleNotFoundError: No module named 'exceptions' message
+So:
+    pip install docx
+and then:
+    pip install python-docx 

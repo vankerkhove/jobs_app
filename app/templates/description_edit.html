@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  index block header
+<style>
+  .fixed-width-label { display: inline-block;  width: 150px;  text-align: right;  }
+</style>
+{% endblock %}
+{% block content %}
+  <form method="post">
+  <h2>Edit Description</h2>
+  {% if job %}
+    Description ID: {{ job[0] }}<br><br>
+    Jobs Details ID: {{ job[1] }}
+    {% if job[1] %}
+      <input type="submit" name="select_to_details" value="To Details">
+    {% else %}
+      <br>
+    {% endif %}
+    <br>
+      <label for="company">Company:</label>
+      <input id="company" name="company" required value="{{ job[2] }}"><br>
+      <label for="position">Position:</label>
+      <input id="position" name="position" required value="{{ job[3] }}"><br>
+      <label for="applied">Applied (date):</label>
+      <input type="date" id="applied" name="applied" value="{{ job[4] }}"><br>
+
+      <label for="description">Description:</label><br>
+      <textarea style="white-space:pre-wrap; word-wrap:break-word"
+        id="description" name="description"
+        rows="12" cols="100">{{ job[5] }}</textarea>
+      <br><br>
+  {% endif %}
+
+  {% if delete %}
+    <input type="submit" name="select_confirm_delete" style="color: red;" value="Confirm Delete">
+    <input type="submit" name="select_cancel_delete" value="Cancel Delete">
+  {% else %}
+    <input type="submit" name="select_update" value="Update">
+    <input type="submit" name="select_cancel" value="Cancel" formnovalidate>
+    <input type="submit" name="select_reset" value="Reset" formnovalidate>
+    {% if confirm %}
+      <input type="submit" name="select_confirm" value="Confirm" formnovalidate>
+    {% endif %}
+  {% endif %}
+
+  </form>
+{% endblock %}

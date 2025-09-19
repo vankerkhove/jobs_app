@@ -14,3 +14,4 @@ input { margin-bottom: 0.75em; }
     overflow: auto; }
 tbody tr:nth-child(odd) { background-color: #f2f2f2; }
 tbody tr:nth-child(even) { background-color: #ffffff; }
+details { margin-left: 20px;  margin-bottom: 3px;}

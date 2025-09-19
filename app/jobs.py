@@ -95,6 +95,13 @@ def get_job(job_id):
         abort(404, f"Post id {id} doesn't exist.")
     return job
 
+def get_description(job_id):
+    job = get_db().execute(
+        'SELECT * FROM description WHERE id = ?', (job_id,)).fetchone()
+    if job is None:
+        abort(404, f"Post id {id} doesn't exist.")
+    return job
+
 def get_jobs(columns='*', condition=None):
     where_condition = ""
     if condition:
@@ -204,12 +211,18 @@ def listing():
     return render_template('listing.html', column_list=columns)
 
 
-
 @bp.route('/<int:id>/details', methods=['GET', 'POST'])
 def details(id):
     job = get_job(id)
     job = [html_multiline(str(i)) for i in job]
-        
+    description = None
+    command = ("SELECT description FROM description " +
+               "WHERE company = ? AND position = ? AND applied = ?")
+    job_columns = tuple(job[1:4])
+    _description = get_db().execute(command, job_columns).fetchone()
+    description = _description[0] if _description else None
+    #print(list(_description))
+
     if request.method == 'POST':
         forms = request.form.keys()
         if 'select_edit' in forms:
@@ -220,8 +233,12 @@ def details(id):
             return redirect( url_for('jobs.details', id=previous_job(id)) )
         if 'select_next' in forms:
             return redirect( url_for('jobs.details', id=next_job(id)) )
+        if 'show_description' in forms:
+            description = "my description"
+        if 'hide_description' in forms:
+            description = None
 
-    return render_template('details.html', job=job)
+    return render_template('details.html', job=job, description=description)
 
 
 def get_jobs_edits(html_data):
@@ -400,7 +417,142 @@ def find(id=None):
         interview_jobs=interview_jobs)
 
 
-@bp.route('/description', methods=['GET', 'POST'])
-def description():
-    flash(f"Description operation not implemented...")
-    return redirect(url_for('index'))
+### Description Pages
+###
+
+def sync_details_descrptions():
+    db = get_db()
+    jobs = db.execute("SELECT id, job_id,company,position,applied " +
+                        " FROM description;").fetchall()
+    for job in jobs:
+        id = job[0]
+        job_id = job[1]
+        job_columns = tuple(job[2:])
+        command = (f"SELECT id FROM jobs WHERE " +
+                    "company = ? AND position = ? AND applied = ?")
+        details_id = db.execute(command, job_columns ).fetchone()
+        match_id = details_id[0] if details_id else None
+        if job_id:
+            if job_id != match_id:
+                print(
+                    f"DEBUG: jobs vs. description IDs mismatch: {job_columns}")
+                cmd = f"UPDATE description SET job_id = Null WHERE id = {id}"
+                db_execute(cmd, commit=True)
+        else:
+            if match_id:
+                cmd = f"UPDATE description SET job_id = ? WHERE id = {id}"
+                db_execute(cmd, (match_id,), commit=True)
+            else:
+                print(
+                    f"DEBUG: Job ID not found for description: {job_columns}")
+
+@bp.route('/descriptions', methods=['GET', 'POST'])
+def descriptions():
+    jobs_list = None
+    one_job = None
+    interview_jobs = None
+    company = ""
+    position = ""
+    applied = ""
+
+    if request.method == 'POST':
+        company = request.form['company']
+        position = request.form['position']
+        applied = request.form['applied']
+
+        forms = request.form.keys()
+        if "reset_page" in request.form.keys():
+            company = ""
+            position = ""
+            applied = ""
+
+        if "select_sync_jobs" in request.form.keys():
+            sync_details_descrptions()
+    
+    db = get_db()
+    jobs_list = list(db.execute("SELECT * " + 
+                     "FROM description ORDER BY id ASC").fetchall())
+    
+    return render_template(
+        'descriptions.html',
+        jobs=jobs_list,
+        one_job=one_job,
+        company=company,
+        position=position,
+        applied=applied,
+        jobs_list=jobs_list,
+        number=str(len(jobs_list)))
+
+
+def description_edit_fields(html_data):
+    # See get_jobs_edits() for 'jobs' table
+    edit_data = [
+        html_data['company'],
+        html_data['position'],
+        html_data['applied'],
+        html_data['description'].replace('\r\n', '\n'),
+    ]
+    return edit_data
+
+def update_description(id, new, original):
+    # See update_job() for 'jobs' table
+    columns = table_columns(table='description')[2:]
+    # get all changed columns
+    updates = {columns[i]: new[i] 
+               for i in range(len(new)) if new[i] != original[i]}
+    # format set columns, e.g.: "company = ?, position = ?,..."
+    set_columns = ", ".join([f"{key}=?" for key in updates.keys()])
+    command = f"UPDATE description SET {set_columns} WHERE id = {id}"
+    return db_execute(command, parameters=list(updates.values()), commit=True)
+
+@bp.route('/<int:id>/description_edit', methods=['GET', 'POST'])
+def description_edit(id):
+    
+    job = get_description(id)
+
+    if request.method == 'POST':
+        forms = request.form.keys()
+        if 'select_update' in forms:
+            edit_data = description_edit_fields(request.form)
+            current_data = list(get_description(id))[2:]
+            if edit_data != current_data:
+                result, msg = update_description(id, edit_data, current_data)
+                result = True
+                if result:
+                    flash("Job updated...")
+                    return redirect( url_for('jobs.descriptions', id=id))
+                else:
+                    msg = "temp"
+                    flash(msg)
+                    #job = [id] + edit_data
+            else:
+                flash("No changes to job...")
+            return redirect( url_for('jobs.descriptions'))
+        elif 'select_cancel' in forms:
+            flash("Edit cancelled...")
+            return redirect( url_for('jobs.descriptions'))
+        elif 'select_reset' in forms:
+            flash("Reset to original...")
+
+    return render_template('description_edit.html', job=job, edit=True)
+
+@bp.route('/<int:id>/description_delete', methods=['GET', 'POST'])
+def description_delete(id):
+    job = get_description(id)
+
+    if request.method == 'POST':
+        forms = request.form.keys()
+        if 'select_confirm_delete' in forms:
+            flash(f"Deleted job id: {id}")
+            delete_query = f"DELETE FROM jobs WHERE id = {id}"
+            #db_execute(delete_query, commit=True)
+            return redirect( url_for('jobs.descriptions'))
+        elif 'select_cancel_delete' in forms:
+            flash("Delete cancelled")
+            return redirect( url_for('jobs.descriptions', id=id)) 
+
+
+    flash(f"Deleting job: {id}...")
+    return render_template('description_edit.html', job=job, delete=True)
+
+
