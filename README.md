@@ -17,23 +17,23 @@ Git repo
 Layout
 TBD
 
-Initiate Git repo:
+Initiate Git repo (done once):
 project jobs_app
 /_workspace/git> init jobs_app
 
-Create virtual environment:
+Create virtual environment (done once):
 > cd jobs_app
 /_workspace/jobs_app> python -m venv .venv
-Once created, then activate:
+Once created, then activate (each time):
 > .venv\Scripts\activate
 
-Install Flask
+Install Flask (done once)
 > pip install Flask
 
 Run Flask app:
 flask --app <app_name> run
-If app name is 'app' then:
-flask run
+If app name (the folder) is 'app' then  (the case for this project):
+> flask run
 
 From browser: http://127.0.0.1:5000
 
@@ -43,4 +43,4 @@ ModuleNotFoundError: No module named 'exceptions' message
 So:
     pip install docx
 and then:
-    pip install python-docx 
+    pip install python-docx

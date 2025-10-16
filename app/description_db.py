@@ -5,8 +5,10 @@ from docx2python import docx2python
 from helpers import get_date, iso_date
 from tools.db_tools import DB
 
+#description_file = './data/description/Jobs_Applied_description_test.docx'
 description_file = './data/description/Jobs_Applied_description_test.docx'
-description_file = './data/description/Jobs_Applied_description_4_8-8.docx'
+#description_file = './data/description/Jobs_Applied_description_08-08_09-18.docx'
+
 
 def read_docx_file(docx_file):
     try:
@@ -21,6 +23,20 @@ def read_docx_file(docx_file):
     return None
 
 def parse_file_content(lines):
+    """Parse the line from the description file. 
+    First section 'jobstart>>>' contains lines:
+      1. Company
+      2. Position
+      3. Applied data (option and may be '_unknown_')
+    Second section 'jobd>>>' contains the lines of the job descripions
+
+    Args:
+        lines (text): all lines from description file
+
+    Returns:
+        list: each job with (list) company, postion, applied date, 
+        description text
+    """
     _start = "jobstart>>>"
     _description = "jobd>>>"
     _end = "jobend>>>"
@@ -43,7 +59,6 @@ def parse_file_content(lines):
         elif status == "details":
             this_job.append(line)
         elif status == "description":
-            print(line)
             this_description.append(line)
 
     return all_jobs

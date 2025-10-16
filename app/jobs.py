@@ -418,7 +418,11 @@ def find(id=None):
 
 
 ### Description Pages
+#
+#
+#
 ###
+
 
 def sync_details_descrptions():
     db = get_db()
@@ -446,6 +450,17 @@ def sync_details_descrptions():
                 print(
                     f"DEBUG: Job ID not found for description: {job_columns}")
 
+def get_descriptions(columns='*', condition=None):
+    where_condition = ""
+    if condition:
+        where_condition = f"WHERE {condition}"
+    try:
+        jobs = get_db().execute(
+            f'SELECT {columns} FROM description {where_condition}').fetchall()
+        return jobs
+    except Exception as e:
+        print(f"Exception - Get Job error: {e}")
+
 @bp.route('/descriptions', methods=['GET', 'POST'])
 def descriptions():
     jobs_list = None
@@ -455,6 +470,7 @@ def descriptions():
     position = ""
     applied = ""
 
+    condition = None
     if request.method == 'POST':
         company = request.form['company']
         position = request.form['position']
@@ -468,10 +484,14 @@ def descriptions():
 
         if "select_sync_jobs" in request.form.keys():
             sync_details_descrptions()
-    
+
+        if "find_job" in request.form.keys():
+            condition = key_condition(company, position, applied)
+
     db = get_db()
-    jobs_list = list(db.execute("SELECT * " + 
-                     "FROM description ORDER BY id ASC").fetchall())
+    # See get_jobs() for 'jobs' table
+    jobs_list = get_descriptions(condition=condition)
+    number_jobs = len(jobs_list) if type(jobs_list) == list else 0
     
     return render_template(
         'descriptions.html',
@@ -481,7 +501,8 @@ def descriptions():
         position=position,
         applied=applied,
         jobs_list=jobs_list,
-        number=str(len(jobs_list)))
+        number=str(number_jobs)
+        )
 
 
 def description_edit_fields(html_data):
@@ -544,13 +565,12 @@ def description_delete(id):
         forms = request.form.keys()
         if 'select_confirm_delete' in forms:
             flash(f"Deleted job id: {id}")
-            delete_query = f"DELETE FROM jobs WHERE id = {id}"
-            #db_execute(delete_query, commit=True)
+            delete_query = f"DELETE FROM description WHERE id = {id}"
+            db_execute(delete_query, commit=True)
             return redirect( url_for('jobs.descriptions'))
         elif 'select_cancel_delete' in forms:
             flash("Delete cancelled")
             return redirect( url_for('jobs.descriptions', id=id)) 
-
 
     flash(f"Deleting job: {id}...")
     return render_template('description_edit.html', job=job, delete=True)
