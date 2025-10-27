@@ -469,6 +469,7 @@ def descriptions():
     company = ""
     position = ""
     applied = ""
+    only_details = None
 
     condition = None
     if request.method == 'POST':
@@ -488,7 +489,27 @@ def descriptions():
         if "find_job" in request.form.keys():
             condition = key_condition(company, position, applied)
 
-    db = get_db()
+        if "undated_description" in request.form.keys():
+            condition = ("applied IS '' OR " + 
+                         "applied IS NULL OR " + 
+                         "applied IS '_unknown_'")
+
+        if "unmatched_description" in request.form.keys():
+            # find all non-matching descriptions vs. job details
+            condition = ("job_id IS '' OR " + 
+                         "job_id IS NULL OR " + 
+                         "job_id IS 0")
+
+            # get the job details such that there is no matching description
+            descr_job_id = [i[0] for i in get_descriptions(columns="job_id")]
+            detail_id = set([i[0] for i in get_jobs(columns="id")])
+            x_details_list = list(set(detail_id) - set(descr_job_id))
+            only_details = []
+            for i in x_details_list:
+                detail = get_jobs(columns="id, company, position, applied", 
+                             condition=f"id = {i}")
+                only_details.append(tuple(detail[0]))
+
     # See get_jobs() for 'jobs' table
     jobs_list = get_descriptions(condition=condition)
     number_jobs = len(jobs_list) if type(jobs_list) == list else 0
@@ -501,7 +522,8 @@ def descriptions():
         position=position,
         applied=applied,
         jobs_list=jobs_list,
-        number=str(number_jobs)
+        number=str(number_jobs),
+        only_details = only_details,
         )
 
 

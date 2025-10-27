@@ -9,7 +9,7 @@
 
 {% block content %}
   <div id="div_xtop"></div>
-  <h2>Descriptions...</h2>
+  <h2>Job Descriptions</h2>
 
   <p>Find job (leave all fields blank to list all):</p>
   <form method="post">
@@ -22,15 +22,38 @@
     <label for="applied">Applied (date):</label>
     <input id="applied" name="applied" value="{{ applied }}"><br>
 
-    <input type="submit" name="find_job" value="Find Job">
+    <input title="Show description based on search fields"
+     type="submit" name="find_job" value="Find Job">
     &nbsp;
-    <input type="submit" name="reset_page" value="Reset">
+    <input title="Clear search fields and display all descriptions"
+     type="submit" name="reset_page" value="Reset">
     &nbsp;
-    <input type="submit" name="select_sync_jobs" value="Sync Jobs">
+    <input title="Sync descriptions to the jobs details"
+     type="submit" name="select_sync_jobs" value="Sync Jobs">
+    &nbsp;
+    <input title="Show only undated descriptions"
+     type="submit" name="undated_description" value="Undated Descriptions">
+    &nbsp;
+    <input title="Show unmatched descriptions vs. details (based on last Sync)"
+     type="submit" name="unmatched_description" value="Unmatched Descriptions">
     <br>
 
   <a href="{{ url_for('jobs.descriptions') }}">collapse all</a>
-  <a href="#div_xbottom">jump to bottom</a><br><br>
+  <a href="#div_xbottom">jump to bottom</a>
+
+  {% if only_details %}
+    <p><i>Job Details with no description found:</i></p>
+    <div style="margin-left: 1%;">
+      {% for x_job in only_details %}
+        {{ x_job[1] }}, {{ x_job[2] }}, {{ x_job[3] }}: 
+        <a href="{{ url_for('jobs.details', id=x_job[0]) }}">{{ x_job[0] }}</a>
+        <br>
+      {% endfor %}
+    </div>
+    <p><i>Job Descriptions with no details found:</i></p>
+   {% else %}
+    <p><i>Job Descriptions:</i></p>
+   {% endif %}
 
   {% if jobs %}
     {% for row in jobs %}
