@@ -51,10 +51,11 @@
       {% endfor %}
     </div>
     <p><i>Job Descriptions with no details found:</i></p>
-   {% else %}
+  {% else %}
     <p><i>Job Descriptions:</i></p>
-   {% endif %}
+  {% endif %}
 
+  <div style="margin-left: 10px;">
   {% if jobs %}
     {% for row in jobs %}
       {{ row[2] }}, {{ row[3] }}, {{ row[4] }} 
@@ -74,6 +75,7 @@
   {% endif %}
   <br>
   Number of descriptions: {{ number }}
+  </div>
   <br>
   <div id="div_xbottom"></div>
   <br><a href="#top_of_page">jump to top</a><br>
